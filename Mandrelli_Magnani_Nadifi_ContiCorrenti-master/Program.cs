@@ -148,7 +148,6 @@ namespace Mandrelli_Magnani_Nadifi_ContiCorrenti_master
                                                 {
                                                     Prelievo p = new Prelievo(quantita, dataMovimento);
                                                     conto.AddMovimenti(p);
-                                                    p.Sommare(conto);
                                                     controllo = true;
                                                 }
                                                 else
@@ -165,7 +164,6 @@ namespace Mandrelli_Magnani_Nadifi_ContiCorrenti_master
                                                     {
                                                         Prelievo p = new Prelievo(quantita, dataMovimento);
                                                         conto.AddMovimenti(p);
-                                                        p.Sommare(conto);
                                                         controllo = true;
                                                     }
                                                     else
@@ -220,7 +218,6 @@ namespace Mandrelli_Magnani_Nadifi_ContiCorrenti_master
                                         {
                                             Versamento v = new Versamento(quantita, dataMovimento);
                                             conto.AddMovimenti(v);
-                                            v.Sommare(conto);
                                             controllo2 = true;
                                         }
                                         else
@@ -272,7 +269,6 @@ namespace Mandrelli_Magnani_Nadifi_ContiCorrenti_master
                                     {
                                         if (iban2 == conto.getIban())
                                         {
-                                            conto.AddMovimenti(b);
                                             b.EseguiBonifico(posto, conto);
                                             controllo3 = true;
                                         }
@@ -305,15 +301,17 @@ namespace Mandrelli_Magnani_Nadifi_ContiCorrenti_master
             } while (scelta=="Y" || scelta=="y");
 
             Console.WriteLine("\n");
-            // Stampa info intestatario e del relativo conto 
-            foreach (Intestatario intestatario in DB.getIntestatari())
-            {
-                Console.WriteLine("\nIntestatario: " + intestatario.getNome() + " " + intestatario.getCognome() + "\nData di nascita: " + intestatario.getDataNascita() + "\nAbita in via: " + intestatario.getIndirizzo() + "\nNumero di telefono: " + intestatario.getTelefono());
-                foreach (ContoCorrente conto in DB.getConti())
+            do {
+                // Stampa info intestatario e del relativo conto 
+                foreach (Intestatario intestatario in DB.getIntestatari())
                 {
-                    if (conto.getCodiceFiscaleintestatario() == intestatario.getCodiceFiscale())
-                    {                       
+                    Console.WriteLine("\nIntestatario: " + intestatario.getNome() + " " + intestatario.getCognome() + "\nData di nascita: " + intestatario.getDataNascita() + "\nAbita in via: " + intestatario.getIndirizzo() + "\nNumero di telefono: " + intestatario.getTelefono());
+                    foreach (ContoCorrente conto in DB.getConti())
+                    {
+                        if (conto.getCodiceFiscaleintestatario() == intestatario.getCodiceFiscale())
+                        {
                             Console.WriteLine("\nCONTO: ");
+                            Console.WriteLine("IBAN: " + conto.getIban());
                             Console.WriteLine("Stampa del saldo di " + intestatario.getNome() + " " + intestatario.getCognome() + ": " + conto.getSaldo());
                             // Vengono effettuati un versamento e un prelievo con la relativa stampa aggiornata
                             Console.WriteLine("MOVIMENTI:");
@@ -322,11 +320,44 @@ namespace Mandrelli_Magnani_Nadifi_ContiCorrenti_master
                                 movimento.Sommare(conto);
                                 Console.Write(movimento.getImporto() + " euro" + " fatto nel: " + movimento.getDataOra() + " - saldo attuale: " + conto.getSaldo() + "\n");
                             }
-                            Console.WriteLine("\n");                                            
+                            Console.WriteLine("\n");
+                        }
                     }
+                    Console.WriteLine("__________________________________________________________________________________________________");
                 }
-                Console.WriteLine("__________________________________________________________________________________________________");
-            }
+                bool controllou = false;
+                do {
+                    do
+                    {
+                        Console.Write("\nVuole eliminare un conto?: (Y/N)");
+                        scelta = Console.ReadLine();
+                    } while (scelta != "y" && scelta != "Y" && scelta != "n" && scelta != "N");
+                    if (scelta == "y" || scelta == "Y")
+                    {
+
+                        Console.Write("Inserire Iban del conto che vuole eliminare?: ");
+                        iban = Console.ReadLine();
+                        foreach (ContoCorrente conto in DB.getConti())
+                        {
+                            if (iban == conto.getIban())
+                            {
+                                DB.RemoveConto(conto);
+                                controllou = true;
+                                break;
+                            }
+                            else
+                            {
+                                Console.WriteLine("Iban non trovato");
+                                controllou = false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        controllou = true;
+                    }
+                } while (controllou == false);
+            } while (scelta!="n" && scelta!="N");
             Console.ReadLine();
         }
     }

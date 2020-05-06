@@ -243,6 +243,11 @@ namespace Mandrelli_Magnani_Nadifi_ContiCorrenti_master
             conti.Add(c);
         }
 
+        public void RemoveConto(ContoCorrente c)
+        {
+            conti.Remove(c);
+        }
+
         public List<ContoCorrente> getConti()
         {
             return conti;
