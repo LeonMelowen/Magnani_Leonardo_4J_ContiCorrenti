@@ -301,6 +301,7 @@ namespace Mandrelli_Magnani_Nadifi_ContiCorrenti_master
             } while (scelta=="Y" || scelta=="y");
 
             Console.WriteLine("\n");
+            bool controlloi = false;
             do {
                 // Stampa info intestatario e del relativo conto 
                 foreach (Intestatario intestatario in DB.getIntestatari())
@@ -317,7 +318,10 @@ namespace Mandrelli_Magnani_Nadifi_ContiCorrenti_master
                             Console.WriteLine("MOVIMENTI:");
                             foreach (Movimento movimento in conto.getMovimenti())
                             {
-                                movimento.Sommare(conto);
+                                if (controlloi == false)
+                                {
+                                    movimento.Sommare(conto);
+                                }
                                 Console.Write(movimento.getImporto() + " euro" + " fatto nel: " + movimento.getDataOra() + " - saldo attuale: " + conto.getSaldo() + "\n");
                             }
                             Console.WriteLine("\n");
@@ -326,6 +330,7 @@ namespace Mandrelli_Magnani_Nadifi_ContiCorrenti_master
                     Console.WriteLine("__________________________________________________________________________________________________");
                 }
                 bool controllou = false;
+                controlloi = true;
                 do {
                     do
                     {
@@ -335,7 +340,7 @@ namespace Mandrelli_Magnani_Nadifi_ContiCorrenti_master
                     if (scelta == "y" || scelta == "Y")
                     {
 
-                        Console.Write("Inserire Iban del conto che vuole eliminare?: ");
+                        Console.Write("Inserire Iban del conto che vuole eliminare: ");
                         iban = Console.ReadLine();
                         foreach (ContoCorrente conto in DB.getConti())
                         {
